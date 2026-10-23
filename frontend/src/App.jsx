@@ -1,11 +1,13 @@
 /** Own the local session snapshot and access-only route composition. */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import { clearSession, getSession } from './utils/auth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Avatar } from './components/Avatar';
 import LoginPage from './pages/LoginPage';
+import LandingPage from './pages/LandingPage';
+import RegisterPage from './pages/RegisterPage';
 
 /** Show honest temporary navigation without implementing future features.
  * Args:
@@ -76,7 +78,10 @@ export default function App() {
   const [session, setSessionSnapshot] = useState(getSession);
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<LandingPage session={session} />} />
+      <Route path="/register" element={
+        <RegisterPage session={session} onSessionChange={setSessionSnapshot} />
+      } />
       <Route path="/login" element={<LoginPage session={session} onSessionChange={setSessionSnapshot} />} />
       {['/blogs', '/blog/:id', '/write', '/edit/:id', '/admin', '/users'].map((path) => (
         <Route key={path} path={path} element={
