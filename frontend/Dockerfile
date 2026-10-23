@@ -1,7 +1,7 @@
 FROM node:20.19.0-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --no-bin-links
+RUN npm ci --include=dev --no-bin-links && test -f node_modules/vite/bin/vite.js
 COPY . .
 RUN node node_modules/vite/bin/vite.js build
 FROM nginx:1.27.4-alpine
