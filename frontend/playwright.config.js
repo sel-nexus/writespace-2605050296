@@ -8,6 +8,6 @@ export default defineConfig({
   webServer: {
     command: 'node node_modules/vite/bin/vite.js preview --host 0.0.0.0 --strictPort --port ' + port,
     cwd: new URL('.', import.meta.url).pathname,
-    url: baseURL, reuseExistingServer: false, timeout: 30000,
+    url: baseURL, reuseExistingServer: true, timeout: 30000,
   },
 });

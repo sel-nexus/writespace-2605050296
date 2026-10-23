@@ -15,6 +15,10 @@ test.afterEach(async ({ page }) => {
 
 test('admin entry, invalid attempt, navigation, reload persistence and logout', async ({ page }, testInfo) => {
   await page.goto('/');
+  await expect(page).toHaveURL(/[/]$/);
+  await expect(page.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeVisible();
+  await expect(page.getByLabel('Password')).toHaveCount(0);
+  await page.getByRole('navigation', { name: 'Public' }).getByRole('link', { name: 'Login', exact: true }).click();
   await expect(page).toHaveURL(/[/]login$/);
   await page.getByLabel('Username').fill('admin');
   await page.getByLabel('Password').fill('wrong');
@@ -26,20 +30,34 @@ test('admin entry, invalid attempt, navigation, reload persistence and logout', 
   await expect(page).toHaveURL(/[/]admin$/);
   const expected = { userId: 'admin', username: 'admin', displayName: 'Admin', role: 'admin' };
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')))).toEqual(expected);
-  await expect(page.getByText(/no content tools yet/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Admin Dashboard' })).toBeVisible();
+  await expect(page.getByText('No blogs yet. Be the first to write one!')).toBeVisible();
   await page.getByRole('link', { name: 'All Blogs' }).click();
   await expect(page).toHaveURL(/[/]blogs$/);
+  await expect(page.getByRole('heading', { name: 'All Blogs' })).toBeVisible();
   await page.reload();
+  await expect(page).toHaveURL(/[/]blogs$/);
+  await expect(page.getByRole('heading', { name: 'All Blogs' })).toBeVisible();
   await expect(page.getByText('Admin', { exact: true }).last()).toBeVisible();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')))).toEqual(expected);
   await page.getByRole('link', { name: 'Admin', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Administrator workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Admin Dashboard' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('admin-access.png'), fullPage: true });
+  await page.getByRole('link', { name: 'Users', exact: true }).click();
+  await expect(page).toHaveURL(/[/]users$/);
+  await expect(page.getByRole('heading', { name: 'User Management' })).toBeVisible();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')))).toEqual(expected);
+  await page.getByRole('button', { name: 'Admin admin', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Admin admin', exact: true })).toHaveAttribute('aria-expanded', 'true');
   await page.getByRole('button', { name: 'Logout' }).click();
-  await expect(page).toHaveURL(/[/]login$/);
+  await expect(page).toHaveURL(/[/]$/);
+  await expect(page.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('writespace_session'))).toBeNull();
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
+  await expect(page).toHaveURL(/[/]$/);
+  await expect(page.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeVisible();
+  await expect(page.getByLabel('Password')).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem('writespace_session'))).toBeNull();
 });
 
 test('mobile guest deep-entry guard and accessible login', async ({ page }, testInfo) => {

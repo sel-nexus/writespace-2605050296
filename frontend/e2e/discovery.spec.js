@@ -30,6 +30,10 @@ test('landing signup, exact local records, reload, dashboard CTA and logout', as
   await expect(page.getByRole('link', { name: 'Go to Dashboard' })).toBeVisible();
   await page.getByRole('link', { name: 'Go to Dashboard' }).click();
   await expect(page).toHaveURL(/[/]blogs$/);
+  const identityDropdown = page.locator('button[aria-controls="account-actions"]');
+  await expect(identityDropdown).toHaveAttribute('aria-expanded', 'false');
+  await identityDropdown.click();
+  await expect(identityDropdown).toHaveAttribute('aria-expanded', 'true');
   await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page.getByRole('link', { name: 'Get Started Free' })).toBeVisible();
   await page.screenshot({ path: info.outputPath('landing.png'), fullPage: true });

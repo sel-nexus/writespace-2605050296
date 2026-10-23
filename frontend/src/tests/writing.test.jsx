@@ -7,6 +7,7 @@ import '@testing-library/jest-dom/vitest';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import App from '../App';
 import WriteBlog from '../pages/WriteBlog';
+import ReadBlog from '../pages/ReadBlog';
 import { BlogCard } from '../components/BlogCard';
 import { canModify, excerpt, formatDate } from '../utils/storage';
 const uid = '73f3aefa-c002-46af-a3ec-32252ed78001';
@@ -52,7 +53,7 @@ it('lists newest first with stable ties, excerpts and owner-only controls withou
   expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual(['Latest', 'First', 'Tie']);
   expect(screen.getAllByRole('link', { name: 'Edit' })).toHaveLength(2);
   expect(writes).not.toHaveBeenCalled();
-  expect(document.querySelector('.grid')).toHaveClass('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3');
+  expect(document.querySelector('.grid')).toHaveClass('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
 });
 it.each([null, '{bad', '{}', '[{}]'])('shows exact empty fallback without repair: %s', (raw) => {
   if (raw !== null) localStorage.setItem('writespace_posts', raw);
@@ -148,21 +149,126 @@ it.each(['/write', '/edit/' + pid])('cancel leaves bytes untouched %s', async (p
   expect(localStorage.getItem('writespace_posts')).toBe(raw);
   expect(screen.getByLabelText('Location')).toHaveTextContent(path === '/write' ? '/blogs' : '/blog/' + pid);
 });
-it.each(['cancel', 'success', 'actor', 'target', 'missing', 'corrupt', 'quota'])('confirmed deletion branch %s', async (mode) => {
-  localStorage.setItem('writespace_posts', JSON.stringify([post])); mount('/blog/' + pid);
-  vi.spyOn(window, 'confirm').mockImplementation(() => {
-    if (mode === 'actor') localStorage.setItem('writespace_session', JSON.stringify({ ...actor, userId: pid }));
-    if (mode === 'target') localStorage.setItem('writespace_posts', JSON.stringify([{ ...post, authorId: 'admin' }]));
-    if (mode === 'missing') localStorage.setItem('writespace_posts', '[]');
-    if (mode === 'corrupt') localStorage.setItem('writespace_posts', '{bad');
+/** Keep the mounted reader stale while observing real navigation and session callbacks. */
+function mountReader(onSessionChange = vi.fn()) {
+  mount('/blog/' + pid,
+    <Routes location={'/blog/' + pid}>
+      <Route path="/blog/:id" element={<ReadBlog session={actor} onSessionChange={onSessionChange} />} />
+    </Routes>);
+  return onSessionChange;
+}
+it.each(['before', 'after'])('rejects stale mounted null actor %s confirmation', (phase) => {
+  const raw = JSON.stringify([post]);
+  localStorage.setItem('writespace_posts', raw);
+  const changed = mountReader();
+  const confirm = vi.spyOn(window, 'confirm').mockImplementation(() => {
+    localStorage.removeItem('writespace_session');
+    return true;
+  });
+  if (phase === 'before') localStorage.removeItem('writespace_session');
+  const writes = vi.spyOn(Storage.prototype, 'setItem');
+  fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+  expect(confirm).toHaveBeenCalledTimes(phase === 'before' ? 0 : 1);
+  expect(changed.mock.calls).toEqual([[null]]);
+  expect(writes).not.toHaveBeenCalled();
+  expect(localStorage.getItem('writespace_posts')).toBe(raw);
+  expect(screen.getByLabelText('Location').textContent).toBe('/login');
+});
+it.each(['before', 'after'])('rejects stale target %s confirmation without handler writes', (phase) => {
+  // Each target transition is independently mounted so the visible snapshot remains owned.
+  for (const mode of ['missing', 'owner changed']) {
+    localStorage.setItem('writespace_posts', JSON.stringify([post]));
+    mountReader();
+    const raw = JSON.stringify(mode === 'missing' ? [] : [{ ...post, authorId: 'admin' }]);
+    const set = Storage.prototype.setItem;
+    const confirm = vi.spyOn(window, 'confirm').mockImplementation(() => {
+      set.call(localStorage, 'writespace_posts', raw);
+      return true;
+    });
+    if (phase === 'before') localStorage.setItem('writespace_posts', raw);
+    const writes = vi.spyOn(Storage.prototype, 'setItem');
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(confirm).toHaveBeenCalledTimes(phase === 'before' ? 0 : 1);
+    expect(writes).not.toHaveBeenCalled();
+    expect(localStorage.getItem('writespace_posts')).toBe(raw);
+    expect(screen.getByLabelText('Location').textContent).toBe(mode === 'missing' ? '/blog/' + pid : '/blogs');
+    if (mode === 'missing') expect(screen.getByRole('heading', { name: 'Post not found' })).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).toBeNull();
+    cleanup(); vi.restoreAllMocks();
+  }
+});
+it.each(['before', 'after'])('rejects corrupt or denied strict reads %s confirmation', (phase) => {
+  for (const mode of ['corrupt', 'denied']) {
+    const original = JSON.stringify([post]);
+    localStorage.setItem('writespace_posts', original);
+    mountReader();
+    const get = Storage.prototype.getItem;
+    const set = Storage.prototype.setItem;
+    let denied = false;
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function(key) {
+      if (denied && key === 'writespace_posts') throw new Error('denied');
+      return get.call(this, key);
+    });
+    const breakRead = () => {
+      if (mode === 'corrupt') set.call(localStorage, 'writespace_posts', '{bad');
+      else denied = true;
+    };
+    const confirm = vi.spyOn(window, 'confirm').mockImplementation(() => { breakRead(); return true; });
+    if (phase === 'before') breakRead();
+    const writes = vi.spyOn(Storage.prototype, 'setItem');
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(confirm).toHaveBeenCalledTimes(phase === 'before' ? 0 : 1);
+    expect(writes).not.toHaveBeenCalled();
+    expect(get.call(localStorage, 'writespace_posts')).toBe(mode === 'corrupt' ? '{bad' : original);
+    expect(screen.getByLabelText('Location').textContent).toBe('/blog/' + pid);
+    expect(screen.getByRole('alert').textContent).toBe('Browser storage prevented deletion. Please try again.');
+    expect(screen.getByRole('heading', { name: 'First' })).toBeInTheDocument();
+    cleanup(); vi.restoreAllMocks();
+  }
+});
+it.each(['cancel', 'success', 'actor', 'quota'])('confirmed deletion exact state and routing: %s', (mode) => {
+  const raw = JSON.stringify([post]);
+  localStorage.setItem('writespace_posts', raw); mount('/blog/' + pid);
+  const set = Storage.prototype.setItem;
+  const confirm = vi.spyOn(window, 'confirm').mockImplementation(() => {
+    if (mode === 'actor') set.call(localStorage, 'writespace_session', JSON.stringify({ ...actor, userId: pid }));
     return mode !== 'cancel';
   });
-  if (mode === 'quota') vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('quota'); });
-  await userEvent.setup().click(screen.getByRole('button', { name: 'Delete' }));
-  if (mode === 'success') expect(localStorage.getItem('writespace_posts')).toBe('[]');
-  else if (mode === 'missing') expect(screen.getByText('Post not found')).toBeInTheDocument();
-  else if (['corrupt', 'quota'].includes(mode)) expect(screen.getByRole('alert')).toHaveTextContent('prevented deletion');
-  else expect(JSON.parse(localStorage.getItem('writespace_posts'))).toHaveLength(1);
+  const writes = vi.spyOn(Storage.prototype, 'setItem');
+  if (mode === 'quota') writes.mockImplementation(() => { throw new Error('quota'); });
+  fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+  expect(confirm.mock.calls).toEqual([['Delete this post?']]);
+  expect(localStorage.getItem('writespace_posts')).toBe(mode === 'success' ? '[]' : raw);
+  expect(screen.getByLabelText('Location').textContent).toBe(['success', 'actor'].includes(mode) ? '/blogs' : '/blog/' + pid);
+  if (['success', 'quota'].includes(mode)) expect(writes.mock.calls).toEqual([['writespace_posts', '[]']]);
+  else expect(writes).not.toHaveBeenCalled();
+  if (mode === 'quota') expect(screen.getByRole('alert').textContent).toBe('Browser storage prevented deletion. Please try again.');
+  else expect(screen.queryByRole('alert')).toBeNull();
+  if (mode === 'cancel') expect(screen.getByRole('heading', { name: 'First' })).toBeInTheDocument();
+});
+it.each(['nested', 'sequential'])('delete gate blocks %s activation and remains consumed after success', (mode) => {
+  const survivor = { ...post, id: uid, title: 'Survivor' };
+  localStorage.setItem('writespace_posts', JSON.stringify([post, survivor]));
+  mountReader();
+  const button = screen.getByRole('button', { name: 'Delete' });
+  const confirm = vi.spyOn(window, 'confirm').mockImplementation(() => {
+    if (mode === 'nested') fireEvent.click(button);
+    return true;
+  });
+  const writes = vi.spyOn(Storage.prototype, 'setItem');
+  act(() => { fireEvent.click(button); fireEvent.click(button); });
+  // Restore an eligible target: a mere missing-target check cannot satisfy this assertion.
+  const raw = JSON.stringify([survivor, post]);
+  const successfulWrites = writes.mock.calls.slice();
+  Storage.prototype.setItem.mockRestore();
+  localStorage.setItem('writespace_posts', raw);
+  const laterWrites = vi.spyOn(Storage.prototype, 'setItem');
+  fireEvent.click(button);
+  expect(confirm.mock.calls).toEqual([['Delete this post?']]);
+  expect(successfulWrites).toEqual([['writespace_posts', JSON.stringify([survivor])]]);
+  expect(laterWrites).not.toHaveBeenCalled();
+  expect(localStorage.getItem('writespace_posts')).toBe(raw);
+  expect(screen.getByLabelText('Location').textContent).toBe('/blogs');
 });
 it('resolves stored-admin avatar and invokes explicit card edit only on click', async () => {
   const edit = vi.fn(); mount('/blogs', <BlogCard post={post} session={actor} index={5} users={[{ id: uid, role: 'admin' }]} onEdit={edit} />);

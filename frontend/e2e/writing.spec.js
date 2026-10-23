@@ -63,10 +63,20 @@ for (const width of [375, 768, 1280]) {
     await expect(page).toHaveURL(/\/$/);
     expect(await page.evaluate(() => localStorage.getItem('writespace_session'))).toBeNull();
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_users')))).toHaveLength(1);
-    await page.goto('/edit/' + original.id);
-    await expect(page).toHaveURL(/\/login$/);
-    await page.reload();
-    await expect(page.getByRole('button', { name: /Log in|Sign in/i })).toBeVisible();
     expect(errors).toEqual([]);
   });
 }
+
+test('guest edit deep link is guarded on initial entry and reload', async ({ page }) => {
+  const errors = [];
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/edit/87015eb3-4386-4870-a91e-3a1bdf51d001');
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('button', { name: /Log in|Sign in/i })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('writespace_session'))).toBeNull();
+  await page.reload();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('button', { name: /Log in|Sign in/i })).toBeVisible();
+  expect(errors).toEqual([]);
+});

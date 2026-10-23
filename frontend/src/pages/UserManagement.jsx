@@ -115,7 +115,10 @@ export default function UserManagement({ session }) {
             )}
           </div>
         ))}
-        <button type="submit" disabled={submitting} className="justify-self-start rounded-lg bg-indigo-600 px-4 py-3 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50">
+        <button type="submit" disabled={submitting} className={
+          'justify-self-start rounded-lg bg-indigo-600 px-4 py-3 text-white hover:bg-indigo-700 ' +
+          'focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50'
+        }>
           {submitting ? 'Creating account…' : 'Create account'}
         </button>
       </form>

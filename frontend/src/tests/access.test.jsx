@@ -162,14 +162,16 @@ describe('guards and application session lifecycle', () => {
   it.each(['/admin', '/users'])('redirects ordinary users from %s to blogs', (path) => {
     application(path, user);
     expect(screen.getByLabelText('Location')).toHaveTextContent('/blogs');
-    expect(screen.getByRole('heading', { name: 'Writing workspace' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All Blogs' })).toBeInTheDocument();
   });
   it.each([admin, user])('allows persisted $role on blogs without mount writes', (session) => {
     localStorage.setItem('writespace_session', JSON.stringify(session));
     const writes = vi.spyOn(Storage.prototype, 'setItem');
     application('/blogs');
     expect(screen.getByText(session.displayName, { selector: 'span' })).toBeInTheDocument();
-    expect(screen.getByText(/no content tools yet/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All Blogs' })).toBeInTheDocument();
+    expect(screen.getByText('No blogs yet. Be the first to write one!')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Write a blog' })).toHaveAttribute('href', '/write');
     expect(writes).not.toHaveBeenCalled();
   });
   it.each(['{broken', '{}', JSON.stringify({ ...admin, role: 'root' })])('fails closed on malformed session %s', (raw) => {
@@ -199,32 +201,43 @@ describe('guards and application session lifecycle', () => {
     localStorage.setItem('writespace_users', '[]');
     localStorage.setItem('writespace_posts', '[]');
     application('/');
+    expect(screen.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('navigation', { name: 'Public' }).querySelector('a[href="/login"]'));
     fireEvent.submit(credentials());
+    expect(screen.getByRole('heading', { name: 'Admin Dashboard' })).toBeInTheDocument();
     expect(screen.getByText('Admin', { selector: 'span' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: 'All Blogs' }));
     expect(screen.getByLabelText('Location')).toHaveTextContent('/blogs');
+    fireEvent.click(screen.getByRole('button', { name: 'Admin admin' }));
     fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
     expect(getSession()).toBeNull();
     expect(localStorage.getItem('writespace_users')).toBe('[]');
     expect(localStorage.getItem('writespace_posts')).toBe('[]');
-    expect(screen.getByLabelText('Location')).toHaveTextContent('/login');
+    expect(screen.getByLabelText('Location').textContent).toBe('/');
+    expect(screen.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeInTheDocument();
   });
   it('does not claim logout on removal failure and permits explicit retry', () => {
     application('/admin', admin);
     const remove = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => { throw new Error('denied'); });
+    fireEvent.click(screen.getByRole('button', { name: 'Admin admin' }));
     fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
     expect(screen.getByRole('alert')).toHaveTextContent('You are still signed in');
     expect(getSession()).toEqual(admin);
     expect(screen.getByLabelText('Location')).toHaveTextContent('/admin');
     remove.mockRestore();
+    fireEvent.click(screen.getByRole('button', { name: 'Admin admin' }));
     fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
     expect(getSession()).toBeNull();
+    expect(screen.getByLabelText('Location').textContent).toBe('/');
+    expect(screen.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeInTheDocument();
   });
   it('offers a back-home link for unknown routes', () => {
     application('/missing');
     expect(screen.getByRole('heading')).toHaveTextContent('Page not found');
     fireEvent.click(screen.getByRole('link', { name: 'Back home' }));
-    expect(screen.getByLabelText('Location')).toHaveTextContent('/login');
+    expect(screen.getByLabelText('Location').textContent).toBe('/');
+    expect(screen.getByRole('heading', { name: 'Your thoughts. Your space. Beautifully simple.' })).toBeInTheDocument();
   });
   it.each(['admin', 'user'])('renders a decorative static SVG for %s', (role) => {
     const { container } = render(<Avatar role={role} />);

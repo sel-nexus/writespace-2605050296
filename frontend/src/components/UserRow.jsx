@@ -24,7 +24,9 @@ export function UserRow({ user, session, onDelete, isDefault = false, mobile = f
     </div>
   );
   const role = (
-    <span className={user.role === 'admin' ? 'rounded-full bg-violet-50 px-2 py-1 text-xs text-violet-800' : 'rounded-full bg-indigo-50 px-2 py-1 text-xs text-indigo-800'}>
+    <span className={user.role === 'admin' ?
+      'rounded-full bg-violet-50 px-2 py-1 text-xs text-violet-800' :
+      'rounded-full bg-indigo-50 px-2 py-1 text-xs text-indigo-800'}>
       {user.role}
     </span>
   );
@@ -35,7 +37,10 @@ export function UserRow({ user, session, onDelete, isDefault = false, mobile = f
     <span title={tooltip}>
       <button type="button" disabled={disabled} title={tooltip} aria-label={'Delete ' + user.username}
         onClick={() => onDelete(user.id)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus:ring-2 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">
+        className={
+          'rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus:ring-2 ' +
+          'focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50'
+        }>
         Delete
       </button>
     </span>

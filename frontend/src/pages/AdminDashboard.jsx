@@ -78,8 +78,16 @@ export default function AdminDashboard({ session }) {
       </dl>
       <p className="mt-3 text-sm text-slate-600">Account counts include the default admin once. Both users totals include all accounts.</p>
       <nav aria-label="Quick actions" className="my-10 flex flex-wrap gap-4">
-        <Link to="/write" className="rounded-lg bg-indigo-600 px-5 py-3 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500">Write a blog</Link>
-        <Link to="/users" className="rounded-lg border border-slate-300 px-5 py-3 text-slate-700 hover:bg-white focus:ring-2 focus:ring-indigo-500">Manage users</Link>
+        <Link
+          to="/write"
+          className="rounded-lg bg-indigo-600 px-5 py-3 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
+        >
+          Write a blog
+        </Link>
+        <Link to="/users" className={
+          'rounded-lg border border-slate-300 px-5 py-3 text-slate-700 hover:bg-white ' +
+          'focus:ring-2 focus:ring-indigo-500'
+        }>Manage users</Link>
       </nav>
       {error && <p role="alert" className="mb-6 text-red-700">{error}</p>}
       <h2 className="mb-6 text-2xl font-semibold">Recent posts</h2>

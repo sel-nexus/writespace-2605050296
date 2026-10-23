@@ -19,7 +19,7 @@ export default function Home({ session }) {
         <Link to="/write" className="rounded-lg bg-indigo-600 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">Write a blog</Link>
       </div>
       {posts.length ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, index) => (
             <BlogCard key={post.id} post={post} index={index} session={session} users={users} />
           ))}
