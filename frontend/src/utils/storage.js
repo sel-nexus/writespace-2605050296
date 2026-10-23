@@ -127,3 +127,70 @@ export function excerpt(content) { return content.slice(0, 120); }
 export function canModify(session, post) {
   return Boolean(session && post && (session.role === 'admin' || session.userId === post.authorId));
 }
+
+/** Require a current administrator for every account action.
+ * Args:
+ *   actor: Freshly read, validated session.
+ * Raises:
+ *   Error: Administrator access is no longer available.
+ */
+export function requireAccountAdmin(actor) {
+  if (!actor || actor.role !== 'admin') throw new Error('Administrator access is required.');
+}
+
+/** Create an exact account from current, strictly readable records.
+ * Args:
+ *   form: Literal account fields supplied by the administrator.
+ *   actor: Current session, re-read by the action handler.
+ * Returns:
+ *   Persisted account collection.
+ * Raises:
+ *   Error: Invalid fields, identity conflict, denied access or storage failure.
+ */
+export function createAccount(form, actor) {
+  requireAccountAdmin(actor);
+  if (!['displayName', 'username', 'password'].every((field) => nonblank(form[field]))
+    || !['admin', 'user'].includes(form.role)) throw new Error('All fields and a valid role are required.');
+  const users = readArrayForMutation(USER_KEY);
+  if (form.username === 'admin' || users.some((user) => user.username === form.username)) {
+    throw new Error('Username already exists.');
+  }
+  const account = { id: crypto.randomUUID(), displayName: form.displayName,
+    username: form.username, password: form.password, role: form.role, createdAt: new Date().toISOString() };
+  const next = [...users, account];
+  saveUsers(next);
+  return next;
+}
+
+/** Prepare eligible deletion without legitimizing unreadable account bytes.
+ * Args:
+ *   id: Selected account identifier.
+ *   actor: Current validated session.
+ * Returns:
+ *   Fresh accounts after eligibility and existence checks.
+ * Raises:
+ *   Error: Missing, default, current, or unauthorized account selection.
+ */
+export function prepareAccountDeletion(id, actor) {
+  requireAccountAdmin(actor);
+  if (id === 'admin') throw new Error('Default admin cannot be deleted.');
+  if (id === actor.userId) throw new Error('Your current account cannot be deleted.');
+  const users = readArrayForMutation(USER_KEY);
+  if (!users.some((user) => user.id === id)) throw new Error('Account not found.');
+  return users;
+}
+
+/** Delete only an eligible account, never its authored posts or session.
+ * Args:
+ *   id: Confirmed target identifier.
+ *   actor: Session re-read after confirmation.
+ * Returns:
+ *   Persisted remaining accounts.
+ * Raises:
+ *   Error: Eligibility, integrity, or persistence failure.
+ */
+export function deleteAccount(id, actor) {
+  const next = prepareAccountDeletion(id, actor).filter((user) => user.id !== id);
+  saveUsers(next);
+  return next;
+}
