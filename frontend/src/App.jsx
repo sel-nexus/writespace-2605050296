@@ -11,6 +11,7 @@ import { Navbar } from './components/Navbar';
 import Home from './pages/Home';
 import ReadBlog from './pages/ReadBlog';
 import WriteBlog from './pages/WriteBlog';
+import AdminDashboard from './pages/AdminDashboard';
 
 /** Show honest temporary navigation without implementing future features.
  * Args:
@@ -39,7 +40,8 @@ function AccessSurface({ session, onSessionChange, title }) {
       <main className="mx-auto max-w-6xl px-6 py-16">
         {title === '/blogs' ? <Home session={session} /> :
           title.startsWith('/blog/') ? <ReadBlog session={session} onSessionChange={onSessionChange} /> :
-          title === '/write' || title.startsWith('/edit/') ? <WriteBlog key={title} session={session} onSessionChange={onSessionChange} /> : (
+          title === '/write' || title.startsWith('/edit/') ? <WriteBlog key={title} session={session} onSessionChange={onSessionChange} /> :
+          title === '/admin' ? <AdminDashboard session={session} /> : (
             <section>
               <h1 className="text-3xl font-semibold">Administrator workspace</h1>
               <p className="mt-4 text-slate-600">Administration tools are not available in this feature slice.</p>
