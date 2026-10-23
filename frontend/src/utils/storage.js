@@ -116,3 +116,14 @@ export function getUsers() { return readForDisplay(USER_KEY); }
 export function saveUsers(arr) {
   localStorage.setItem(USER_KEY, JSON.stringify(validateArray(USER_KEY, arr)));
 }
+
+/** Return native English creation date text. */
+export function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+}
+/** Retain the first 120 literal characters. */
+export function excerpt(content) { return content.slice(0, 120); }
+/** Authorize only administrators or the current author. */
+export function canModify(session, post) {
+  return Boolean(session && post && (session.role === 'admin' || session.userId === post.authorId));
+}
