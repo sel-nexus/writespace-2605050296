@@ -60,6 +60,66 @@
       "_origin": "ast"
     },
     {
+      "id": "frontend_e2e_interface_spec",
+      "label": "interface.spec.js",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_widths",
+      "label": "widths",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L4",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_posts",
+      "label": "posts",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_preflight",
+      "label": "preflight()",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L23",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_loginadmin",
+      "label": "loginAdmin()",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L46",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_nopageoverflow",
+      "label": "noPageOverflow()",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L52",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_e2e_interface_spec_columns",
+      "label": "columns()",
+      "file_type": "code",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L55",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
       "id": "frontend_e2e_writing_spec",
       "label": "writing.spec.js",
       "file_type": "code",
@@ -1235,7 +1295,7 @@
       "label": "actor",
       "file_type": "code",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast"
     },
     {
@@ -1243,7 +1303,7 @@
       "label": "post",
       "file_type": "code",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast"
     },
     {
@@ -1251,7 +1311,7 @@
       "label": "Location()",
       "file_type": "code",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "_callable": true,
       "_origin": "ast"
     },
@@ -1260,7 +1320,7 @@
       "label": "mount()",
       "file_type": "code",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "_callable": true,
       "_origin": "ast"
     },
@@ -1269,7 +1329,16 @@
       "label": "fill()",
       "file_type": "code",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L29",
+      "source_location": "L30",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_src_tests_writing_test_mountreader",
+      "label": "mountReader()",
+      "file_type": "code",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L153",
       "_callable": true,
       "_origin": "ast"
     },
@@ -1490,6 +1559,22 @@
       "source_location": "L1",
       "_origin": "ast",
       "community": 6
+    },
+    {
+      "id": "vercel",
+      "label": "vercel.json",
+      "file_type": "code",
+      "source_file": "vercel.json",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "vercel_rewrites",
+      "label": "rewrites",
+      "file_type": "code",
+      "source_file": "vercel.json",
+      "source_location": "L1",
+      "_origin": "ast"
     }
   ],
   "links": [
@@ -1597,6 +1682,121 @@
       "confidence": "EXTRACTED",
       "source_file": "frontend/e2e/discovery.spec.js",
       "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "ref_playwright_test",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_widths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_posts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_preflight",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_loginadmin",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_nopageoverflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_columns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_columns",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_loginadmin",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_preflight",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_interface_spec",
+      "target": "frontend_e2e_interface_spec_nopageoverflow",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/interface.spec.js",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -3004,7 +3204,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/AdminDashboard.jsx",
-      "source_location": "L93",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5109,12 +5309,23 @@
     },
     {
       "source": "frontend_src_tests_writing_test",
-      "target": "frontend_src_components_blogcard",
+      "target": "frontend_src_pages_readblog",
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
       "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_tests_writing_test",
+      "target": "frontend_src_components_blogcard",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5125,7 +5336,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5136,7 +5347,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5147,7 +5358,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5158,7 +5369,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5169,7 +5380,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5179,7 +5390,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5189,7 +5400,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5199,7 +5410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5209,7 +5420,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5219,7 +5430,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L29",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_tests_writing_test",
+      "target": "frontend_src_tests_writing_test_mountreader",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5230,7 +5451,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5241,7 +5462,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5252,7 +5473,29 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/tests/writing.test.jsx",
-      "source_location": "L81",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_tests_writing_test_mountreader",
+      "target": "frontend_src_tests_writing_test_mount",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L154",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_tests_writing_test",
+      "target": "frontend_src_tests_writing_test_mountreader",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L163",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -5656,6 +5899,16 @@
       "_origin": "ast"
     },
     {
+      "source": "vercel",
+      "target": "vercel_rewrites",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "vercel.json",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
       "source": "frontend_src_app",
       "target": "frontend_src_pages_loginpage_loginpage",
       "relation": "imports",
@@ -5876,6 +6129,17 @@
       "_origin": "ast"
     },
     {
+      "source": "frontend_src_tests_writing_test",
+      "target": "frontend_src_pages_readblog_readblog",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
       "source": "frontend_src_app_accesssurface",
       "target": "frontend_src_utils_auth_clearsession",
       "relation": "calls",
@@ -5937,7 +6201,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/components/UserRow.jsx",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6494,7 +6758,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/AdminDashboard.jsx",
-      "source_location": "L92",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6698,7 +6962,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/UserManagement.jsx",
-      "source_location": "L128",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6893,13 +7157,25 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_tests_writing_test_mountreader",
+      "target": "frontend_src_pages_readblog_readblog",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/tests/writing.test.jsx",
+      "source_location": "L156",
+      "weight": 1.0,
+      "_origin": "ast"
     }
   ],
   "metadata": {
-    "built_at": "2026-10-23T06:54:35.543084+00:00",
+    "built_at": "2026-10-23T07:52:39.452425+00:00",
     "version": "graph_update-v1",
     "codebase_root": "C:\\artifacts-v2\\T0132PcJVCRTV000123102605050296\\developer",
     "force": true,
-    "files_scanned": 36
+    "files_scanned": 38
   }
 }
